@@ -1,8 +1,9 @@
 #🧠 EECE5644 – Assignment 2: Bayesian Estimation and Regression
 
-Northeastern University
-Author: Atharva Prashant Kale
-Date: October 22, 2025
+**Course:** Machine Learning and Pattern Recognition  
+**University:** Northeastern University  
+**Author:** Atharva Prashant Kale (002442878)  
+**Email:** kale.ath@northeastern.edu  
 
 ⸻
 
