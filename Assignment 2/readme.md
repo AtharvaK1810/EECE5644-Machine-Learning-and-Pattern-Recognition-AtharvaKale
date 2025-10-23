@@ -7,13 +7,13 @@
 
 ⸻
 
-## Overview
+## 📘 Overview
 
 This repository contains all MATLAB code, figures, and reports for Assignment 2 of EECE5644 – Machine Learning and Pattern Recognition.
 The assignment explores Bayesian estimation, regression, and generative modeling using Gaussian and Dirichlet frameworks.
 All experiments were executed in MATLAB R2025b.
 
-### How to Run
+### ⚙️ How to Run
 1.	Open MATLAB R2025b.
 2.	Navigate to the MATLAB folder:
 
@@ -22,7 +22,7 @@ All experiments were executed in MATLAB R2025b.
 
 3.	All figures will appear in ../figs_A2/ and results in ../results/.
 
-#### Topics Covered
+#### 🧩 Topics Covered
 1.	Two-Class Gaussian Mixtures: MAP and Logistic (Linear/Quadratic).
 2.	Cubic Regression: ML vs MAP with Gaussian prior.
 3.	Bayesian Localization: Sensor fusion and posterior uncertainty.
