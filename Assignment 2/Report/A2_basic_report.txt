@@ -1,0 +1,41 @@
+Assignment 2 – Basic Report (Plain Text)
+Author: Atharva Prashant Kale | NUID: 002442878 | kale.ath@northeastern.edu
+Generated on: 22-Oct-2025 13:10:21
+
+Q1. Two-Class Classification (Gaussian Mixtures)
+- MAP (true mixture) minimum probability of error (validation): 0.3472
+- Logistic Linear P(error) [D50, D500, D5000]: 0.4580 0.4047 0.3976 
+- Logistic Quadratic P(error) [D50, D500, D5000]: 0.3670 0.3512 0.3511 
+Simple interpretation: MAP uses the exact pdf and is stronger; quadratic features help logistic converge as data grows.
+
+Q2. Cubic Regression (ML vs MAP ridge)
+- ML MSE (validation): 0.040792
+- Best MAP MSE (validation): 0.040792 at gamma = 100
+Simple interpretation: MAP adds L2 regularization; best gamma balances bias and variance.
+
+Q3. Localization MAP (Contours)
+- Contour plots saved as Q3_contours_K1..K4.pdf under figs_A2/.
+Simple interpretation: combining Gaussian prior with range measurements creates bowl-shaped objective; contours shrink around the true location as K increases.
+
+Q4. Bayes Boundary (DHS 2.13 illustration)
+- Plot: figs_A2/Q4_BayesBoundary.pdf
+Simple interpretation: with unequal covariances/priors, the Bayes boundary is generally quadratic.
+
+Q5. Categorical–Dirichlet (ML & MAP)
+- Theta estimates (rows = True; ML; then MAP for listed alphas):
+0.100000	0.200000	0.500000	0.200000
+0.120000	0.220000	0.420000	0.240000
+0.120000	0.220000	0.420000	0.240000
+0.125000	0.221154	0.413462	0.240385
+0.137931	0.224138	0.396552	0.241379
+Simple interpretation: ML = counts/total; MAP shrinks toward prior (stronger when alpha is larger).
+
+Figure files found in figs_A2/:
+- Q1_MAP_ROC.pdf
+- Q2_MAP_MSE_vs_gamma.pdf
+- Q3_contours_K1.pdf
+- Q3_contours_K2.pdf
+- Q3_contours_K3.pdf
+- Q3_contours_K4.pdf
+- Q4_BayesBoundary.pdf
+- Q5_Categorical_Dirichlet.pdf
