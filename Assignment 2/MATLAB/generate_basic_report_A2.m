@@ -1,7 +1,4 @@
 function generate_basic_report_A2()
-% Generate a simple text report for Assignment 2 from CSV results.
-% Output: results/A2_basic_report.txt
-% Author: Atharva Prashant Kale (NUID: 002442878)
 
 clc;
 
@@ -12,7 +9,7 @@ outFile = fullfile(resDir,'A2_basic_report.txt');
 if ~exist(resDir,'dir'), error('results/ folder not found. Run run_all_A2 first.'); end
 if ~exist(figDir,'dir'), warning('figs_A2/ not found. Figure list may be empty.'); end
 
-% ---- Read CSVs safely ----
+% ---- Read CSVs ----
 q1_minPe = safeReadScalar(fullfile(resDir,'Q1_MAP_minPe.csv'));
 q1_logerr = safeReadMatrix(fullfile(resDir,'Q1_logistic_errors.csv')); % [3x2] [lin quad]
 
