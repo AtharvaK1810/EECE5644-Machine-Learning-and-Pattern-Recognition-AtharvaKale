@@ -1,4 +1,4 @@
-EECE5644 – Assignment 2: Bayesian Estimation and Regression
+🧠 EECE5644 – Assignment 2: Bayesian Estimation and Regression
 
 Northeastern University
 Author: Atharva Prashant Kale
