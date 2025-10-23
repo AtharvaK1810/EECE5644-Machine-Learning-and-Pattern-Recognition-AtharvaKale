@@ -12,28 +12,6 @@ The work demonstrates the performance trade-offs among **ERM**, **Naive Bayes**,
 
 ---
 
-## 📂 Structure
-Assignment1_GaussianModels/
-│
-├── Matlab/
-│   ├── run_all.m                # Runs all questions sequentially
-│   ├── q1_main.m                # ERM, Naive Bayes, LDA
-│   ├── q2_main.m                # 4-class MAP and ERM classifiers
-│   ├── q3_main.m                # QDA on Wine & HAR datasets
-│   └── Utils/                   # Helper functions
-│       ├── add_signature.m
-│       ├── empirical_error.m
-│       ├── log_gaussian_pdf.m
-│       ├── predict_gaussian_generative.m
-│       ├── fit_gaussian_generative.m
-│       └── roc_from_scores.m
-│
-├── Figures/                     # Auto-generated plots with signatures
-├── Results/                     # CSV & text outputs
-└── Report/EECE5644_A1_Report.pdf
-
----
-
 ## ⚙️ How to Run
 
 1. Open MATLAB (R2025b or later).  
