@@ -16,10 +16,10 @@ How to Run
 	1.	Open MATLAB R2025b.
 	2.	Navigate to the MATLAB folder:
 
-cd 'Assignment2/MATLAB'
-run_all_A2
+    cd 'Assignment2/MATLAB'
+    run_all_A2
 
-	3.	All figures will appear in ../figs_A2/ and results in ../results/.
+  3.	All figures will appear in ../figs_A2/ and results in ../results/.
 
 Topics Covered
 	1.	Two-Class Gaussian Mixtures: MAP and Logistic (Linear/Quadratic).
