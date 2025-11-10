@@ -17,7 +17,6 @@ Original file is located at
 import os, math, time, numpy as np
 import matplotlib.pyplot as plt
 
-# Install torch if missing (Colab usually has it)
 try:
     import torch
     import torch.nn as nn
@@ -50,7 +49,6 @@ def add_signature_py(ax_or_fig, name=NAME, nuid=NUID, email=EMAIL):
     """Stamp a light signature on the current figure (bottom-right)."""
     ax = ax_or_fig if hasattr(ax_or_fig, "text") else plt.gca()
     txt = f"{name} | NUID: {nuid} | {email}"
-    # Place outside plot area margin
     ax.text(0.99, -0.12, txt, transform=ax.transAxes, ha="right", va="top", fontsize=8, alpha=0.7)
 
 def savefig(path):
@@ -58,7 +56,6 @@ def savefig(path):
     plt.savefig(path, bbox_inches="tight")
     plt.close()
 
-# Set seeds for reproducibility
 np.random.seed(5644)
 torch.manual_seed(5644)
 
@@ -83,7 +80,7 @@ def sample_4class_gauss_3d(N, means, covs, pri):
         nk = idx.sum()
         if nk > 0:
             X[idx] = np.random.multivariate_normal(means[k], covs[k], nk)
-    return X, y + 1  # labels 1..4
+    return X, y + 1 
 
 def q1_compute_oracle_error(means, covs, pri, M=200000):
     K = means.shape[0]; D = means.shape[1]
@@ -96,7 +93,6 @@ def q1_compute_oracle_error(means, covs, pri, M=200000):
         if n > 0:
             X[sel] = np.random.multivariate_normal(means[k], covs[k], n)
             y[sel] = k + 1
-    # Posteriors under true model
     logp = np.zeros((M, K))
     for k in range(K):
         logp[:, k] = log_gaussian_pdf(X, means[k], covs[k]) + np.log(pri[k])
@@ -107,7 +103,7 @@ class OneHiddenMLP(nn.Module):
     def __init__(self, d_in, d_hid, d_out):
         super().__init__()
         self.fc1 = nn.Linear(d_in, d_hid)
-        self.act = nn.ELU()   # smooth-ramp activation as suggested
+        self.act = nn.ELU()  
         self.fc2 = nn.Linear(d_hid, d_out)
     def forward(self, x):
         return self.fc2(self.act(self.fc1(x)))
@@ -125,7 +121,7 @@ def train_mlp_torch(Xtr, ytr, Xva, yva, P, epochs=80, batch=64, lr=0.05, weight_
     best_state = None
 
     for ep in range(epochs):
-        # epoch LR decay
+   
         for g in opt.param_groups:
             g['lr'] = lr * (0.98 ** ep)
         model.train()
@@ -135,7 +131,7 @@ def train_mlp_torch(Xtr, ytr, Xva, yva, P, epochs=80, batch=64, lr=0.05, weight_
             loss = nn.CrossEntropyLoss()(logits, yb)
             loss.backward()
             opt.step()
-        # validation NLL
+
         model.eval()
         with torch.no_grad():
             logits = model(Xv)
@@ -144,7 +140,7 @@ def train_mlp_torch(Xtr, ytr, Xva, yva, P, epochs=80, batch=64, lr=0.05, weight_
             best_nll = nll
             best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
 
-    # restore best
+
     if best_state is not None:
         model.load_state_dict(best_state)
     return model
@@ -157,7 +153,7 @@ def eval_error(model, X, y):
 
 def q1_run():
     print("[Q1] Training and evaluating 4-class MLP classifier...")
-    # True distribution (3D)
+
     means = np.array([
         [0, 0, 0],
         [3, 0, 0],
@@ -176,13 +172,13 @@ def q1_run():
     lr = 0.05
     weight_decay = 1e-4
 
-    # Oracle error via Monte Carlo
+
     oracle_err = q1_compute_oracle_error(means, covs, pri, M=200000)
 
-    results = []  # rows: [N, P_star, test_error, oracle_error]
+    results = []  
 
     for N in Ns:
-        # Sample data and split 60/20/20
+       
         X, y = sample_4class_gauss_3d(N, means, covs, pri)
         idx = np.random.permutation(N)
         n_tr = int(0.6 * N); n_va = int(0.2 * N)
@@ -194,13 +190,13 @@ def q1_run():
         Xva = X[va_idx]; yva = y[va_idx]
         Xte = X[te_idx]; yte = y[te_idx]
 
-        # Standardize using training
+    
         mu = Xtr.mean(axis=0); sg = Xtr.std(axis=0); sg[sg < 1e-8] = 1.0
         Xtr = (Xtr - mu) / sg
         Xva = (Xva - mu) / sg
         Xte = (Xte - mu) / sg
 
-        # 10-fold CV on Xtr to choose P*
+    
         kf = KFold(n_splits=kfolds, shuffle=True, random_state=123)
         cv_loss_per_P = []
         for P in Pgrid:
@@ -212,7 +208,7 @@ def q1_run():
                 for r in range(restarts):
                     model = train_mlp_torch(XcvTr, ycvTr, XcvVa, ycvVa,
                                             P, epochs=epochs, batch=batch, lr=lr, weight_decay=weight_decay)
-                    # compute val NLL
+                 
                     with torch.no_grad():
                         logits = model(torch.tensor(XcvVa, dtype=torch.float32))
                         nll = nn.CrossEntropyLoss()(logits, torch.tensor(ycvVa-1)).item()
@@ -222,7 +218,7 @@ def q1_run():
 
         P_star = Pgrid[int(np.argmin(cv_loss_per_P))]
 
-        # Retrain on train+val and evaluate on test (multiple restarts)
+        
         Xtrva = np.vstack([Xtr, Xva]); ytrva = np.hstack([ytr, yva])
         best_te = float("inf"); best_pred = None; best_model = None
         for r in range(restarts):
@@ -235,12 +231,12 @@ def q1_run():
         results.append([N, P_star, best_te, oracle_err])
         print(f"[N={N}] P*={P_star} | Test P(error)={best_te:.4f} | Oracle={oracle_err:.4f}")
 
-        # PCA scatter of Xtrva+Xte for visualization
+     
         X_all = np.vstack([Xtrva, Xte]); y_all = np.hstack([ytrva, yte])
         pca = PCA(n_components=2).fit(X_all)
         Xp = pca.transform(X_all)
         plt.figure()
-        # default colors; point sizes
+   
         for cls in [1,2,3,4]:
             m = (y_all == cls)
             plt.scatter(Xp[m,0], Xp[m,1], s=10, label=f"Class {cls}")
@@ -250,7 +246,7 @@ def q1_run():
         add_signature_py(plt.gca())
         savefig(os.path.join(FIG_DIR, "Q1_pca_scatter.pdf"))
 
-        # Confusion matrix on test (best model)
+     
         C = confusion_matrix(yte, best_pred, labels=[1,2,3,4])
         plt.figure()
         plt.imshow(C, aspect="equal")
@@ -261,14 +257,14 @@ def q1_run():
         add_signature_py(plt.gca())
         savefig(os.path.join(FIG_DIR, f"Q1_confusion_mlp_test_N{N}.pdf"))
 
-    # Save results CSV
+
     csv_path = os.path.join(RES_DIR, "Q1_mlp_results.csv")
     with open(csv_path, "w") as f:
         f.write("N,Pstar,test_error,oracle_error\n")
         for row in results:
             f.write(f"{row[0]},{row[1]},{row[2]:.6f},{row[3]:.6f}\n")
 
-    # Semilog-x plot of test error vs N (single curve + oracle line)
+    
     arr = np.array(results)
     Ns_out, Errs = arr[:,0], arr[:,2]
     plt.figure()
@@ -284,9 +280,9 @@ def q1_run():
 # Q2: GMM model order selection with overlap
 # ===========================
 def sample_true_mix(N):
-    # 4-component true mixture with two overlapping components
+   
     means = np.array([[0.0, 0.0],
-                      [0.5, 0.3],    # overlap with comp 0
+                      [0.5, 0.3],    
                       [3.0, 0.0],
                       [3.0, 3.0]])
     cov = 0.6 * np.eye(2)
@@ -315,7 +311,7 @@ def cv_mean_loglike(X, K, nfolds=10, max_iter=600, n_init=5, reg_covar=1e-3):
                                  reg_covar=reg_covar,
                                  random_state=123)
             gm.fit(Xtr)
-            lls.append(gm.score(Xte))  # mean per-sample LL
+            lls.append(gm.score(Xte))  
         except Exception:
             lls.append(-np.inf)
     return float(np.mean(lls))
@@ -327,7 +323,7 @@ def q2_run():
     kfolds = 10
     repeats = 100
 
-    # Example draw figure (overlap visible)
+
     X_demo, _ = sample_true_mix(1000)
     plt.figure()
     plt.scatter(X_demo[:,0], X_demo[:,1], s=6)
@@ -354,7 +350,7 @@ def q2_run():
     print(f"Q2 complete in {time.time()-t0:.1f}s")
 
     rates = sel_counts / repeats
-    # Save CSV
+
     csv_path = os.path.join(RES_DIR, "Q2_gmm_selection_rates_py.csv")
     with open(csv_path, "w") as f:
         f.write("N,K,rate\n")
@@ -362,7 +358,7 @@ def q2_run():
             for jK, K in enumerate(K_grid):
                 f.write(f"{N},{K},{rates[iN,jK]:.6f}\n")
 
-    # Heatmap
+ 
     plt.figure()
     plt.imshow(rates, aspect="auto", origin="upper",
                extent=[K_grid[0], K_grid[-1], Ns[-1]+0.5, Ns[0]-0.5])
@@ -372,7 +368,7 @@ def q2_run():
     add_signature_py(plt.gca())
     savefig(os.path.join(FIG_DIR, "Q2_gmm_selection_heatmap_py.png"))
 
-    # Bar plots per N
+   
     for iN, N in enumerate(Ns):
         plt.figure()
         plt.bar(K_grid, rates[iN])
@@ -391,7 +387,7 @@ print("\nQ1 finished. Figures and CSV saved.\n")
 q2_run()
 print("\nAll done. Outputs saved under:", OUT_DIR)
 
-# Summary pointers
+
 print("\nFiles created:")
 for root, _, files in os.walk(OUT_DIR):
     for fn in files:
