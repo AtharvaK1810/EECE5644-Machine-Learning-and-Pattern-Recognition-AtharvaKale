@@ -18,6 +18,6 @@ The assignment includes two main experiments:
 2. **Question 2 – GMM Model Order Selection:**  
    Using 10-fold cross-validation to determine the correct number of Gaussian mixture components for overlapping clusters.
 
-Work was completed in **Python 3.10 (Google Colab)** and **MATLAB R2025b**, following TA feedback regarding activation type, dimensionality, and cross-validation folds.
+Work was completed in **Python 3.10 (Google Colab)** and **MATLAB R2025b**.
 
 ---
