@@ -7,23 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1wLnu-3sLGfShb09Kbhv0Uzo0YfN4trAL
 """
 
-# ============================================================
-# EECE5644 Assignment 4 - Full Python Pipeline
-# Author: Atharva Prashant Kale
-# NUID:   002442878
-# Email:  kale.ath@northeastern.edu
-#
-# This script is meant to be run in Google Colab as a single cell.
-# It will:
-#   - Question 1: generate synthetic ring data, train SVM and MLP
-#                 with K-fold cross validation, and plot boundaries.
-#   - Question 2: download the official BSDS300 dataset archive,
-#                 extract it, build 5D pixel features for one image,
-#                 run GMM model selection with CV, and segment it.
-#
-# All figures are saved under a4_outputs/ and include a signature.
-# ============================================================
-
 import os
 import time
 import math
@@ -42,10 +25,6 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.mixture import GaussianMixture
 import imageio.v2 as imageio
-
-# -----------------------------
-# Global config and I/O helpers
-# -----------------------------
 
 NAME  = "Atharva Prashant Kale"
 NUID  = "002442878"
@@ -81,9 +60,8 @@ def savefig(fig, path):
     fig.savefig(path, bbox_inches="tight", dpi=200)
     plt.close(fig)
 
-# ============================================================
-# Question 1 - SVM and MLP on concentric ring data
-# ============================================================
+
+# Question 1 - SVM and MLP on concentric ring data 
 
 def generate_ring_data(N_train=1000, N_test=10000, r_neg=2.0, r_pos=4.0, sigma=1.0):
     """
@@ -127,9 +105,9 @@ def q1_run():
     )
     print(f"Training samples: {X_train.shape[0]}, Test samples: {X_test.shape[0]}")
 
-    # --------------------------------------------------------
+   
     # 1A. SVM with RBF kernel - hyperparameter selection
-    # --------------------------------------------------------
+    
     print("\n[Q1 - SVM] Hyperparameter selection with K-fold CV")
 
     svm_pipeline = Pipeline(
@@ -244,9 +222,9 @@ def q1_run():
     add_signature(ax_svm)
     savefig(fig_svm, os.path.join(FIG_DIR_Q1, "q1_svm_boundary.png"))
 
-    # --------------------------------------------------------
+    
     # 1B. MLP with one hidden layer - hyperparameter selection
-    # --------------------------------------------------------
+    
     print("\n[Q1 - MLP] Hyperparameter selection with K-fold CV")
 
     mlp_pipeline = Pipeline(
@@ -256,8 +234,8 @@ def q1_run():
                 "mlp",
                 MLPClassifier(
                     hidden_layer_sizes=(16,),
-                    activation="tanh",   # valid choice per assignment
-                    max_iter=1000,       # increased to reduce warnings
+                    activation="tanh",   
+                    max_iter=1000,       
                     solver="adam",
                     random_state=5644,
                 ),
@@ -373,9 +351,7 @@ def q1_run():
     print(f"MLP test P(error) = {mlp_test_error:.4f}")
 
 
-# ============================================================
 # Question 2 - GMM based image segmentation
-# ============================================================
 
 def download_and_extract_bsds_archive():
     """
@@ -512,10 +488,10 @@ def segment_image_with_gmm(img, feats_all, K):
 def q2_run():
     print("\n=== Question 2: GMM based color image segmentation ===")
 
-    # 1. Download full archive to be safe (robust against 404s on single files)
+    
     download_and_extract_bsds_archive()
 
-    # 2. Pick the first available image
+    
     img_path = get_first_bsds_image()
     print(f"Using image for segmentation:\n  {img_path}")
 
@@ -533,10 +509,10 @@ def q2_run():
     add_signature(ax_orig)
     savefig(fig_orig, os.path.join(FIG_DIR_Q2, "q2_original_image.png"))
 
-    # 2. Build pixel features
+    #  Build pixel features
     feats_all, feats_cv, H, W = build_pixel_features(img, max_pixels_for_cv=40000)
 
-    # 3. GMM model order selection
+    #  GMM model order selection
     K_grid = [2, 3, 4, 5, 6]
     best_K, avg_ll = gmm_cv_model_selection(feats_cv, K_grid, n_folds=5, max_iter=200)
 
@@ -550,17 +526,17 @@ def q2_run():
     add_signature(ax_cv)
     savefig(fig_cv, os.path.join(FIG_DIR_Q2, "q2_gmm_cv_loglik_vs_K.png"))
 
-    # 4. Fit final GMM and segment image
+    #  Fit final GMM and segment image
     labels = segment_image_with_gmm(img, feats_all, best_K)
 
-    # 5. Build a grayscale label image with good contrast
+    #  Build a grayscale label image with good contrast
     label_ids = np.unique(labels)
     K_final = len(label_ids)
     gray_levels = np.linspace(0, 255, K_final, dtype=np.uint8)
     label_to_gray = {lab: gray_levels[i] for i, lab in enumerate(label_ids)}
     seg_gray = np.vectorize(label_to_gray.get)(labels).astype(np.uint8)
 
-    # 6. Show original and segmentation side by side
+    #  Show original and segmentation side by side
     fig_side, axes = plt.subplots(1, 2, figsize=(12, 6))
     axes[0].imshow(img)
     axes[0].set_title("Original image")
@@ -576,9 +552,6 @@ def q2_run():
     print("Q2 finished. Figures are in:", FIG_DIR_Q2)
     print(f"Selected K = {best_K}")
 
-# ============================================================
-# Main - run both questions
-# ============================================================
 
 if __name__ == "__main__":
     print("===============================================")
