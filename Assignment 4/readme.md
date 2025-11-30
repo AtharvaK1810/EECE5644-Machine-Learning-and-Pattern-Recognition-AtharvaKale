@@ -27,13 +27,25 @@ All experiments were performed using a single integrated Python script designed 
 ```
 Assignment 4/
 │
-├── a4_script.py                 # Full Colab compatible script (SVM, MLP, GMM segmentation)
-├── a4_outputs/
-│   ├── q1_figs/                 # Heatmaps and decision boundaries for SVM and MLP
-│   ├── q2_figs/                 # GMM CV curve and segmentation results
+├── README.md
 │
-├── Assignment 4 Report.pdf      # Full written report
-├── README.md                    # This file
+├── Python Code/
+│   └── Assignment 4.py
+│
+├── Output Figs/
+│   ├── Q1/
+│   │   ├── q1_svm_boundary.png
+│   │   ├── q1_mlp_boundary.png
+│   │   ├── q1_svm_cv_heatmap.png
+│   │   └── q1_mlp_cv_curve.png
+│   │
+│   ├── Q2/
+│   │   ├── q2_original_image.png
+│   │   ├── q2_gmm_cv_loglik_vs_K.png
+│   │   └── q2_segmentation_side_by_side.png
+│
+└── Report/
+    └── Assignment 4 Report.pdf 
 ```
 
 ---
